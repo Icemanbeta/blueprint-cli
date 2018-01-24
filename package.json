@@ -1,0 +1,20 @@
+{
+  "name": "blueprint-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sanitize-steps.js",
+  "dependencies": {
+    "commander": "^2.13.0",
+    "jsonfile": "^4.0.0",
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "bin": {
+    "blueprint": "./blueprint.js"
+  },
+  "license": "MIT"
+}
