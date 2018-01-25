@@ -6,7 +6,8 @@
   "dependencies": {
     "commander": "^2.13.0",
     "jsonfile": "^4.0.0",
-    "lodash": "^4.17.4"
+    "lodash": "^3.10.1",
+    "lodash-deep": "^1.6.0"
   },
   "devDependencies": {},
   "scripts": {
