@@ -1,46 +1,107 @@
-const jsonfile = require('jsonfile'),
-      _ = require('lodash');
+const path = require('path'),
+      jsonfile = require('jsonfile'),
+      _ = require('lodash'),
+      traverse = require('traverse');
+      config = {
+        cwd: process.cwd()
+      };
 
-_.mixin(require('lodash-deep'));
+let data,
+    options,
+    type = 'steps';
 
-const clean = (filename) => {
-  let file = filename || './test/Dubai.3.blueprint';
-      data = jsonfile.readFileSync(file),
+function logger(suffix) {
+  if(options.debug) {
+    jsonfile.writeFileSync(
+      path.join(`./blueprint-cli.${suffix}.log`),
+      data.model.steps
+    );
+  }
+}
+
+function isEmpty(data) {
+  return !(data || []).length;
+}
+
+function walk(value) {
+  let parent = this.isRoot ? this.node : this.parent.node,
+      parentType = type;
+
+  switch(this.key) {
+    case 'steps':
+    case 'submodels':
+    case 'parts':
+
+      switch(parentType) {
+        case 'steps':
+          if(isEmpty(parent.submodels) && isEmpty(parent.parts)) {
+            this.parent.delete();
+          }
+
+          break;
+
+        case 'submodels':
+          if(isEmpty(parent.steps) && isEmpty(parent.parts)) {
+            this.parent.delete();
+          }
+
+          break;
+      }
+
+      type = this.key;
+
+      break;
+
+    break;
+  }
+}
+
+const clean = (filename, params) => {
+  let file = filename || './test/Dubai.5.blueprint',
       stats = {
-        before: data.model.steps.length,
-        after: data.model.steps.length
+        before: null,
+        after: null
       },
 
-      map = {};
-      treeMap = {};
+      map = {
+        parts: {},
+        submodels: {},
+        steps: {},
+      },
 
-  _.deepMapValues(data.model, (value, paths) => {
-    let path = paths.join('.'),
-        node;
+      treeMap = {},
+      type = 'steps';
 
-    if(path.match(/(submodels|steps|parts)[.0-9]+id$/i)) {
-      node = paths.filter((key, intKey) => key !== 'id');
-      node.pop();
-      node = node.join('.');
-
-      map[node] = '';
-
-      _.set(treeMap, path, value);
-    }
-  });
-
-  map = _.keys(map).sort((a, b) => b.length - a.length);
-
-  // console.log(map);
-
+  options = params;
+  data = jsonfile.readFileSync(file);
+  stats.before = data.model.steps.length;
   stats.after = data.model.steps.length;
 
-  //jsonfile.writeFileSync('/Users/kchiu/Downloads/models/dubai/test.blueprint', data);
-  //jsonfile.writeFileSync(file, data);
+  logger('import');
+
+  traverse(data.model).forEach(walk)
+  type = 'steps';
+  traverse(data.model).forEach(walk)
+
+  if(options.debug) {
+    jsonfile.writeFileSync(
+      path.join('./blueprint-cli.export.log'),
+      data.model.steps
+    );
+  }
+
+  logger('export');
+
+  stats.after = data.model.steps.length;
 
   console.log('Blueprint file was successfully clean!');
   console.log(`Initial Step Count: ${stats.before}`);
   console.log(`Current Step Count: ${stats.after}`);
+
+  jsonfile.writeFileSync(
+    file,
+    data
+  );
 };
 
 module.exports = {

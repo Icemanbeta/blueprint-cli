@@ -9,9 +9,10 @@ program
 program
   .command('clean [filename]')
   .alias('c')
+  .option('-d, --debug', 'Print debugging log to cwd')
   .description('Clean a *.blueprint file')
-  .action(filename => {
-    clean(filename);
+  .action((filename, options) => {
+    clean(filename, options);
   });
 
 program.parse(process.argv);
