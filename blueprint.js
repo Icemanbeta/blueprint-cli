@@ -7,12 +7,14 @@ program
   .description('Blueprint CLI');
 
 program
-  .command('clean [filename]')
+  .command('clean <files...>')
   .alias('c')
   .option('-d, --debug', 'Print debugging log to cwd')
   .description('Clean a *.blueprint file')
-  .action((filename, options) => {
-    clean(filename, options);
+  .action((files, options) => {
+    files.forEach(file => {
+      clean(file, options);
+    });
   });
 
 program.parse(process.argv);
