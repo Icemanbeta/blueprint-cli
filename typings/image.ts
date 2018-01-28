@@ -4,4 +4,5 @@ export interface Image {
   height: number;
   x?: number;
   y?: number;
+  buffer?: Buffer;
 }

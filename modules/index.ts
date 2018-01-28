@@ -1,6 +1,8 @@
 import * as program from 'commander';
-import * as path from 'path';
+import * as fs from 'fs';
 import * as globfs from 'glob-fs';
+import * as path from 'path';
+
 import { clean } from './clean';
 import { render } from './render';
 
@@ -27,12 +29,13 @@ program
   .option('-d, --debug', 'Print debugging log to cwd')
   .description('Renders all images from a blueprint images export')
   .action((images, outfile, options) => {
-    const pattern = path.join(images, './*.{png,jpeg,jpg}'),
+    const basepath = process.cwd(),
+          pattern = fs.lstatSync(images).isDirectory() ? path.join(images, './*.{png,jpeg,jpg}') : images,
           files = glob
             .readdirSync(pattern)
-            .filter(file => !file.match(/(glossary|title)/));
+            .filter(file => !file.match(/(glossary|title)/))
+            .map(file => path.join(basepath, images, file));
 
-console.log(files);
     render(files, outfile, options);
   });
 

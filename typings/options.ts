@@ -7,6 +7,7 @@ export interface Clean extends Base {
 }
 
 export interface Render extends Base {
+  name: string;
   dpi?: number;
   pageSize?: string;
   orientation?: ('portrait' | 'landscape');

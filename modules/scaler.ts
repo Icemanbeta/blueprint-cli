@@ -11,10 +11,10 @@ export class Scaler {
   private _ratio: number;
 
   constructor(width: number, height: number) {
-    this.__width = width;
-    this.__height = height;
-    this.width = width;
-    this.height = height;
+    this.size = {
+      width: width,
+      height: height,
+    };
   }
 
   public get width(): number {
@@ -23,7 +23,6 @@ export class Scaler {
 
   public set width(width: number) {
     this._width = width;
-    this.refresh();
   }
 
   public get height(): number {
@@ -32,24 +31,25 @@ export class Scaler {
 
   public set height(height: number) {
     this._height = height;
-    this.refresh();
   }
 
   public get size(): Size {
     return {
-      width: this._height,
-      height: this._width,
+      width: this._width,
+      height: this._height,
     }
   }
 
   public set size(size: Size) {
+    this.__width = size.width;
+    this.__height = size.height;
     this._width = size.width;
     this._height = size.height;
     this.refresh();
   }
 
   private refresh(): void {
-    this._ratio = (this._width / this._height);
+    this._ratio = (this.__width / this.__height);
   }
 
   public reset(): Scaler {
@@ -62,9 +62,11 @@ export class Scaler {
   }
 
   public scaleTo(params: Size): Scaler {
+console.log(params)
     if(params.width) {
       this._width = params.width;
       this._height = (params.width / this._ratio);
+console.log([params.width, this._ratio, this._width, this._height]);
     } else {
       this._width = (params.height * this._ratio);
       this._height = params.height;

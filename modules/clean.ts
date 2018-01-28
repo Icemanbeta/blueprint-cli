@@ -85,7 +85,7 @@ export const clean = (filename: string, params: any) => {
 
   if(!options.debug) {
     // Make a backup first
-    fs.renameSync(file, `${file}.backup`);
+    fs.renameSync(file, file.replace(/\.([a-z]+)$/, '.old.$1'));
     jsonfile.writeFileSync(file, data);
   }
 };
