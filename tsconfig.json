@@ -2,13 +2,20 @@
   "compilerOptions": {
     "target": "es6",
     "lib": [
-      "es2017","es2015","es6"
+      "es2017",
+      "es2015",
+      "es5",
+      "es6",
+      "dom",
+      "scripthost"
     ],
     "types": [
-      "node"
+      "node",
+      "lodash"
     ],
-    "allowSyntheticDefaultImport": true,
+    "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "experimentalDecorators": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
