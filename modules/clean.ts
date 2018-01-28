@@ -1,15 +1,16 @@
-const os = require('os'),
-      fs = require('fs'),
-      path = require('path'),
-      jsonfile = require('jsonfile'),
-      traverse = require('traverse'),
-      $ = require('jsonpath'),
-      _ = require('lodash'),
-      config = {
+import * as os from 'os';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as jsonfile from 'jsonfile';
+import * as traverse from 'traverse';
+import * as $ from 'jsonpath';
+import * as _ from 'lodash';
+
+const config = {
         cwd: process.cwd(),
       };
 
-function getParts(data) {
+function getParts(data: any) {
   data = $.query(data, '$..parts');
   data = _.chain(data)
     .flatten()
@@ -19,7 +20,7 @@ function getParts(data) {
   return data;
 }
 
-const clean = (filename, params) => {
+export const clean = (filename: string, params: any) => {
   let file,
       options = params,
       data,
@@ -56,7 +57,8 @@ const clean = (filename, params) => {
   logger(data.model.steps, 'import');
 
   traverse(data.model.steps[0]).forEach(function(node) {
-    let type = this.isRoot ? 'steps' : this.parent.key;
+    let type = this.isRoot ? 'steps' : this.parent.key,
+        parts;
 
     switch(type) {
       case 'submodels':
@@ -86,8 +88,4 @@ const clean = (filename, params) => {
     fs.renameSync(file, `${file}.backup`);
     jsonfile.writeFileSync(file, data);
   }
-};
-
-module.exports = {
-  clean
 };
